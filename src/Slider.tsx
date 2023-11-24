@@ -11,7 +11,7 @@ import {
   getInitialDisplayValueFromProps,
   getControlLeftDetailsFromXPosition,
   getProportionFromProps,
-  getLeftControlXByUnit,
+  getControlLeftStyleFromProportion,
 } from "./sliderHelper";
 
 export type SliderUnit = "%" | "proportional";
@@ -25,21 +25,19 @@ interface Props {
   unit?: SliderUnit;
   onChange(value: number): void;
 }
-// Unfinished:
+// Unfinished in the time:
 // - implement 'step' prop
 // - implement 'onChange' prop
 
-// TODO:
-// - UI Design: ~/public/sliders.png
-// - without using the HTML input element
-// - basic state management to store the control values
-// - pay attention to user experience
-// - think about additional features
+// IDEAS FOR ENHANCEMENTS
 
-// Ideas
-// - think about accessibility (eg tap target size, aria labels, keyboard input that slider responds to)
+// - a slider that relies on click and drag is not very accessible, so I'd look at MDN and WCAG guidance on using semantic or aria roles and make control button interactible via keyboard (Starting point: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/slider_role)
+
 // - add tests: component & logic
-// - add error handling/ error states
+// I've added some unit tests on some logic here.
+// Given more time I would expand on those and also add component tests with React Testing Library and/or cypress
+
+// - Error handling/ error states
 
 export function Slider({
   label,
@@ -62,20 +60,17 @@ export function Slider({
   useEffect(() => {
     if (!userHasMovedSlider && sliderRef.current && controlRef.current) {
       // once elements render, set control to correct initial position based on value prop
-
       const initialProportion = getProportionFromProps(value, min, max);
-      const initialLeftControlX = getLeftControlXByUnit(
-        unit,
+      const initialLeftControlStyle = getControlLeftStyleFromProportion(
         initialProportion,
         sliderRef.current.offsetWidth,
         controlRef.current.offsetWidth
       );
-
-      controlRef.current.style.left = initialLeftControlX;
+      controlRef.current.style.left = initialLeftControlStyle;
     }
   }, [userHasMovedSlider]);
 
-  const handleMouseMove = (event: any) => {
+  const handleMouseMove = (event: MouseEvent) => {
     setUserHasMovedSlider(true);
 
     event.preventDefault(); // prevent text highlight on drag
@@ -107,13 +102,12 @@ export function Slider({
         getDisplayValueFromProportion(unit, proportion, min, max)
       );
     }
-
-    // TODO: sort out MouseEvent types issue & remove 'any' type
   };
   const handleMouseUp = () => {
     // triggered on mouse button release
     // removes listeners so control doesn't move unless mouse moves with button press
     document.removeEventListener("mouseup", handleMouseUp);
+    // @ts-expect-error: known ts limitation on event listeners (https://github.com/microsoft/TypeScript/issues/28357)
     document.removeEventListener("mousemove", handleMouseMove);
   };
   const handleMouseDown = (event: MouseEvent) => {
@@ -126,6 +120,7 @@ export function Slider({
     }
     // adds listeners for mouse movement and button release
     document.addEventListener("mouseup", handleMouseUp);
+    // @ts-expect-error: known ts limitation on event listeners (https://github.com/microsoft/TypeScript/issues/28357)
     document.addEventListener("mousemove", handleMouseMove);
   };
 

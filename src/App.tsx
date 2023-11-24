@@ -7,7 +7,7 @@ export default function App() {
   const [percentageSliderValue, setPercentageSliderValue] = useState(67);
   const [proportionalSliderValue, setProportionalSliderValue] = useState(0.33);
   return (
-    <div className="App">
+    <main className="App">
       <h1>Custom Control Slider Challenge</h1>
       <Info />
       <hr />
@@ -29,6 +29,6 @@ export default function App() {
         unit="proportional"
         onChange={setProportionalSliderValue}
       />
-    </div>
+    </main>
   );
 }

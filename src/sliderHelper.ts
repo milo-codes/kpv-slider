@@ -18,41 +18,15 @@ export const getControlLeftDetailsFromXPosition = (
   return { leftStyle, proportion, leftX };
 };
 
-const getLeftControlXFromPercentage = (
-  percentage: number,
-  sliderWidth: number,
-  controlWidth: number
-) => {
-  const availableWidth = sliderWidth - controlWidth;
-  if (percentage >= 100) return `${availableWidth}px`;
-  if (percentage <= 0) return `0`;
-  return `${(availableWidth * percentage) / 100}px`;
-};
-
-const getLeftControlXFromProportion = (
+export const getControlLeftStyleFromProportion = (
   proportion: number,
   sliderWidth: number,
   controlWidth: number
 ) => {
   const availableWidth = sliderWidth - controlWidth;
-  if (proportion >= 1) return `${availableWidth}px`;
-  if (proportion <= 0) return `0`;
+  if (proportion > 1) return `${availableWidth}px`;
+  if (proportion < 0) return `0`;
   return `${availableWidth * proportion}px`;
-};
-
-export const getLeftControlXByUnit = (
-  // TODO: can these similar funcs be refactored/refined?
-  unit: SliderUnit,
-  value: number,
-  sliderWidth: number,
-  controlWidth: number
-) => {
-  switch (unit) {
-    case "%":
-      return getLeftControlXFromPercentage(value, sliderWidth, controlWidth);
-    case "proportional":
-      return getLeftControlXFromProportion(value, sliderWidth, controlWidth);
-  }
 };
 
 export const getProportionFromProps = (
